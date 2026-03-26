@@ -36,7 +36,6 @@ const CategorySchema = new Schema<ICategoryDocument>(
   },
 );
 
-CategorySchema.index({ slug: 1 }, { unique: true });
 CategorySchema.index({ name: 'text' });
 
 export const CategoryModel: Model<ICategoryDocument> = mongoose.model<ICategoryDocument>(

@@ -3,6 +3,12 @@ export enum UserRole {
   AUTHOR = 'author',
 }
 
+export enum UserStatus {
+  ACTIVE = 'active',
+  DISABLED = 'disabled',
+  DELETED = 'deleted',
+}
+
 export interface IUser {
   _id?: string;
   name: string;
@@ -11,7 +17,7 @@ export interface IUser {
   role: UserRole;
   avatar?: string;
   bio?: string;
-  isActive: boolean;
+  status: UserStatus;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -23,7 +29,7 @@ export interface IUserPublic {
   role: UserRole;
   avatar?: string;
   bio?: string;
-  isActive: boolean;
+  status: UserStatus;
   createdAt: Date;
   updatedAt: Date;
 }

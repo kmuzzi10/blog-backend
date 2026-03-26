@@ -149,6 +149,13 @@ export class PostService {
       throw new ForbiddenError('You can only delete your own posts');
     }
 
+    // If Admin is deleting SOMEONE ELSE'S post, we soft-delete it by changing status
+    if (userRole === UserRole.ADMIN && existingPost.authorId !== userId) {
+      await this.postRepository.update(postId, { status: PostStatus.DELETED_BY_ADMIN });
+      return;
+    }
+
+    // Otherwise (Author deleting own post, or Admin deleting own post), we perform physical delete
     if (existingPost.featuredImage && this.blobStorageService) {
       this.blobStorageService.delete(existingPost.featuredImage).catch(() => {});
     }

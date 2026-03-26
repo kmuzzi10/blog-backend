@@ -5,30 +5,25 @@ export interface ICommentDocument extends Omit<IComment, '_id'>, Document {}
 
 const CommentSchema = new Schema<ICommentDocument>(
   {
-    postId: {
-      type: Schema.Types.ObjectId as any,
-      ref: 'Post',
-      required: [true, 'Post ID is required'],
+    content: {
+      type: String,
+      required: [true, 'Content is required'],
+      trim: true,
+      maxlength: [1000, 'Content cannot exceed 1000 characters'],
     },
     authorId: {
       type: Schema.Types.ObjectId as any,
       ref: 'User',
-      required: [true, 'Author is required'],
+      required: true,
     },
-    content: {
-      type: String,
-      required: [true, 'Comment content is required'],
-      maxlength: [2000, 'Comment cannot exceed 2000 characters'],
-      trim: true,
+    postId: {
+      type: Schema.Types.ObjectId as any,
+      ref: 'Post',
+      required: true,
     },
-    isApproved: {
+    isEdited: {
       type: Boolean,
       default: false,
-    },
-    parentId: {
-      type: Schema.Types.ObjectId as any,
-      ref: 'Comment',
-      default: null,
     },
   },
   {
@@ -43,11 +38,9 @@ const CommentSchema = new Schema<ICommentDocument>(
   },
 );
 
-CommentSchema.index({ postId: 1 });
+// Indexes
+CommentSchema.index({ postId: 1, createdAt: -1 });
 CommentSchema.index({ authorId: 1 });
-CommentSchema.index({ isApproved: 1 });
-CommentSchema.index({ postId: 1, isApproved: 1 });
-CommentSchema.index({ parentId: 1 });
 
 export const CommentModel: Model<ICommentDocument> = mongoose.model<ICommentDocument>(
   'Comment',

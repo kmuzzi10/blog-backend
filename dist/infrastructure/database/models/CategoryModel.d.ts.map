@@ -1,0 +1,1 @@
+{"version":3,"file":"CategoryModel.d.ts","sourceRoot":"","sources":["../../../../src/infrastructure/database/models/CategoryModel.ts"],"names":[],"mappings":"AAAA,OAAiB,EAAU,QAAQ,EAAE,KAAK,EAAE,MAAM,UAAU,CAAC;AAC7D,OAAO,EAAE,SAAS,EAAE,MAAM,mCAAmC,CAAC;AAE9D,MAAM,WAAW,iBAAkB,SAAQ,IAAI,CAAC,SAAS,EAAE,KAAK,CAAC,EAAE,QAAQ;CAAG;AAqC9E,eAAO,MAAM,aAAa,EAAE,KAAK,CAAC,iBAAiB,CAGlD,CAAC"}

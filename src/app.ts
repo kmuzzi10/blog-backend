@@ -15,6 +15,8 @@ import { swaggerSpec } from './shared/config/swagger';
 import { authRoutes } from './modules/auth/auth.routes';
 import { postRoutes } from './modules/posts/posts.routes';
 import { userRoutes } from './modules/users/users.routes';
+import { categoryRoutes } from './modules/categories/category.routes';
+import { commentRoutes } from './modules/comments/comments.routes';
 
 export const buildApp = (): Express => {
   const app: Express = express();
@@ -29,7 +31,7 @@ export const buildApp = (): Express => {
     cors({
       origin: config.allowedOrigins,
       credentials: true,
-      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     })
   );
   app.use(mongoSanitize()); // Prevent NoSQL Injection attacks
@@ -80,6 +82,8 @@ export const buildApp = (): Express => {
   v1Router.use('/auth', authRoutes);
   v1Router.use('/posts', postRoutes);
   v1Router.use('/users', userRoutes);
+  v1Router.use('/categories', categoryRoutes);
+  v1Router.use('/comments', commentRoutes);
 
   app.use('/api/v1', v1Router);
 

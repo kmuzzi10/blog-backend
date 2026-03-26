@@ -1,7 +1,10 @@
+import { IComment } from './Comment';
+
 export enum PostStatus {
-  DRAFT = 'draft',
-  PUBLISHED = 'published',
-  ARCHIVED = 'archived',
+  DRAFT = 'Draft',
+  PUBLISHED = 'Published',
+  ARCHIVED = 'Archived',
+  DELETED_BY_ADMIN = 'Deleted by Admin',
 }
 
 export interface IPost {
@@ -18,6 +21,7 @@ export interface IPost {
   tags: string[];
   readTime?: number;
   viewCount?: number;
+  commentCount?: number;
   publishedAt?: Date;
   createdAt?: Date;
   updatedAt?: Date;
@@ -36,4 +40,7 @@ export interface IPostPublic extends IPost {
     name: string;
     slug: string;
   };
+  comments?: any[]; // Using any[] for simplicity or could be IComment[]
 }
+
+

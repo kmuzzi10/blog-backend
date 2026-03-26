@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { IUserRepository } from '../../domain/interfaces/IUserRepository';
-import { IUser, IUserPublic, UserRole } from '../../domain/entities/User';
+import { IUser, IUserPublic, UserRole, UserStatus } from '../../domain/entities/User';
 import { RegisterDto, LoginDto, ChangePasswordDto } from './auth.dto';
 import { ConflictError, UnauthorizedError, NotFoundError } from '../../shared/utils/AppError';
 import { config } from '../../shared/config/config';
@@ -17,23 +17,41 @@ export interface AuthResponse {
   tokens: AuthTokens;
 }
 
-export class AuthService {
-  constructor(private readonly userRepository: IUserRepository) {}
+import { IBlobStorageService } from '../../domain/interfaces/IBlobStorageService';
 
-  async register(dto: RegisterDto): Promise<AuthResponse> {
+export class AuthService {
+  constructor(
+    private readonly userRepository: IUserRepository,
+    private readonly blobStorageService: IBlobStorageService
+  ) {}
+
+  async register(dto: RegisterDto, file?: Express.Multer.File): Promise<AuthResponse> {
     const existing = await this.userRepository.findByEmail(dto.email);
     if (existing) {
       throw new ConflictError('Email already registered');
     }
 
     const hashedPassword = await bcrypt.hash(dto.password, config.bcryptSaltRounds);
+    
+    let avatarUrl = undefined;
+    if (file) {
+      const uploadResult = await this.blobStorageService.upload(
+        file.buffer,
+        file.originalname,
+        file.mimetype,
+        'avatars'
+      );
+      avatarUrl = uploadResult.url;
+    }
 
     const user = await this.userRepository.create({
       name: dto.name,
       email: dto.email,
       password: hashedPassword,
       role: UserRole.AUTHOR,
-      isActive: true,
+      status: UserStatus.ACTIVE,
+      bio: dto.bio,
+      avatar: avatarUrl,
     });
 
     const tokens = this.generateTokens(user);
@@ -48,8 +66,12 @@ export class AuthService {
       throw new UnauthorizedError('Invalid email or password');
     }
 
-    if (!user.isActive) {
-      throw new UnauthorizedError('Account is deactivated. Contact support.');
+    if (user.status === UserStatus.DISABLED) {
+      throw new UnauthorizedError('Your account has been disabled. You cannot open your account at this moment.');
+    }
+
+    if (user.status === UserStatus.DELETED) {
+      throw new UnauthorizedError('Your account has been deleted by an administrator. Access is permanently revoked.');
     }
 
     const isPasswordValid = await bcrypt.compare(dto.password, user.password);
@@ -82,7 +104,7 @@ export class AuthService {
     try {
       const decoded = jwt.verify(refreshToken, config.jwtRefreshSecret) as JwtPayload;
       const user = await this.userRepository.findById(decoded.userId);
-      if (!user || !user.isActive) {
+      if (!user || user.status !== UserStatus.ACTIVE) {
         throw new UnauthorizedError('Invalid refresh token');
       }
 
@@ -130,7 +152,7 @@ export class AuthService {
       role: user.role,
       avatar: user.avatar,
       bio: user.bio,
-      isActive: user.isActive,
+      status: user.status,
       createdAt: user.createdAt!,
       updatedAt: user.updatedAt!,
     };

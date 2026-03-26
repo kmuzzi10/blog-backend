@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
-import { IUser, UserRole } from '../../../domain/entities/User';
+import { IUser, UserRole, UserStatus } from '../../../domain/entities/User';
 
 export interface IUserDocument extends Omit<IUser, '_id'>, Document {}
 
@@ -38,9 +38,10 @@ const UserSchema = new Schema<IUserDocument>(
       type: String,
       maxlength: [500, 'Bio cannot exceed 500 characters'],
     },
-    isActive: {
-      type: Boolean,
-      default: true,
+    status: {
+      type: String,
+      enum: Object.values(UserStatus),
+      default: UserStatus.ACTIVE,
     },
   },
   {
@@ -57,9 +58,8 @@ const UserSchema = new Schema<IUserDocument>(
 );
 
 // Indexes
-UserSchema.index({ email: 1 }, { unique: true });
 UserSchema.index({ role: 1 });
-UserSchema.index({ isActive: 1 });
+UserSchema.index({ status: 1 });
 UserSchema.index({ createdAt: -1 });
 
 export const UserModel: Model<IUserDocument> = mongoose.model<IUserDocument>('User', UserSchema);

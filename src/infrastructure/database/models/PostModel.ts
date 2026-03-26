@@ -83,7 +83,6 @@ const PostSchema = new Schema<IPostDocument>(
 PostSchema.index({ title: 'text', content: 'text', tags: 'text' }, { weights: { title: 10, tags: 5, content: 1 } });
 
 // Other indexes
-PostSchema.index({ slug: 1 }, { unique: true });
 PostSchema.index({ authorId: 1 });
 PostSchema.index({ status: 1 });
 PostSchema.index({ categoryId: 1 });

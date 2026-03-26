@@ -7,7 +7,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   register = asyncHandler(async (req: Request, res: Response) => {
-    const result = await this.authService.register(req.body);
+    const result = await this.authService.register(req.body, req.file);
     sendSuccess(res, result, 'Registration successful', 201);
   });
 

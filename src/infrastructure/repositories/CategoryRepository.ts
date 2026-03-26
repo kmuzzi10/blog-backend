@@ -11,8 +11,30 @@ export class CategoryRepository implements ICategoryRepository {
     return CategoryModel.findOne({ slug }).lean().exec() as unknown as Promise<ICategory | null>;
   }
 
-  async findAll(): Promise<ICategory[]> {
-    return CategoryModel.find().sort({ name: 1 }).lean().exec() as unknown as Promise<ICategory[]>;
+  async findAll(query?: { page?: number; limit?: number; search?: string }): Promise<{ categories: ICategory[], total: number }> {
+    const page = query?.page || 1;
+    const limit = query?.limit || 10;
+    const skip = (page - 1) * limit;
+    
+    const filter: any = {};
+    if (query?.search) {
+      filter.$text = { $search: query.search };
+    }
+
+    const [categories, total] = await Promise.all([
+      CategoryModel.find(filter)
+        .sort(query?.search ? { score: { $meta: 'textScore' } } : { name: 1 })
+        .skip(skip)
+        .limit(limit)
+        .lean()
+        .exec(),
+      CategoryModel.countDocuments(filter).exec()
+    ]);
+
+    return { 
+      categories: categories as unknown as ICategory[],
+      total 
+    };
   }
 
   async create(

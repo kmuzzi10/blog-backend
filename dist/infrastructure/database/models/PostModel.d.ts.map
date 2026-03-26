@@ -1,0 +1,1 @@
+{"version":3,"file":"PostModel.d.ts","sourceRoot":"","sources":["../../../../src/infrastructure/database/models/PostModel.ts"],"names":[],"mappings":"AAAA,OAAiB,EAAU,QAAQ,EAAE,KAAK,EAAE,MAAM,UAAU,CAAC;AAC7D,OAAO,EAAE,KAAK,EAAc,MAAM,+BAA+B,CAAC;AAElE,MAAM,WAAW,aAAc,SAAQ,IAAI,CAAC,KAAK,EAAE,KAAK,CAAC,EAAE,QAAQ;CAAG;AA8FtE,eAAO,MAAM,SAAS,EAAE,KAAK,CAAC,aAAa,CAAqD,CAAC"}
