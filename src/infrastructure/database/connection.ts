@@ -5,7 +5,7 @@ import { config } from '../../shared/config/config';
 let isConnected = false;
 
 export const connectDB = async (): Promise<void> => {
-  if (isConnected) {
+  if (mongoose.connection.readyState >= 1) {
     logger.info('Using existing MongoDB connection');
     return;
   }
@@ -41,7 +41,7 @@ export const connectDB = async (): Promise<void> => {
   } catch (error) {
     const err = error as Error;
     logger.error(`MongoDB connection failed: ${err.message}`);
-    process.exit(1);
+    throw err;
   }
 };
 
