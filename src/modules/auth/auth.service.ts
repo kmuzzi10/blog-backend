@@ -60,6 +60,35 @@ export class AuthService {
     return { user: userPublic, tokens };
   }
 
+  async registerAdmin(dto: RegisterDto & { adminSecret: string }): Promise<AuthResponse> {
+    const adminSecret = process.env.ADMIN_REGISTRATION_SECRET || 'super-secret-admin-key-123';
+    
+    if (dto.adminSecret !== adminSecret) {
+      throw new UnauthorizedError('Invalid admin registration secret');
+    }
+
+    const existing = await this.userRepository.findByEmail(dto.email);
+    if (existing) {
+      throw new ConflictError('Email already registered');
+    }
+
+    const hashedPassword = await bcrypt.hash(dto.password, config.bcryptSaltRounds);
+
+    const user = await this.userRepository.create({
+      name: dto.name,
+      email: dto.email,
+      password: hashedPassword,
+      role: UserRole.ADMIN,
+      status: UserStatus.ACTIVE,
+      bio: dto.bio || 'Platform Administrator',
+    });
+
+    const tokens = this.generateTokens(user);
+    const userPublic = this.toPublicUser(user);
+
+    return { user: userPublic, tokens };
+  }
+
   async login(dto: LoginDto): Promise<AuthResponse> {
     const user = await this.userRepository.findByEmail(dto.email);
     if (!user) {

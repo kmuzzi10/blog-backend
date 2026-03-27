@@ -13,6 +13,10 @@ export const registerSchema = z.object({
   bio: z.string().max(500, 'Bio too long').optional(),
 });
 
+export const registerAdminSchema = registerSchema.extend({
+  adminSecret: z.string().min(1, 'Admin registration secret is required'),
+});
+
 export const loginSchema = z.object({
   email: z.string().email('Invalid email format'),
   password: z.string().min(1, 'Password is required'),

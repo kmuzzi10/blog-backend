@@ -5,7 +5,7 @@ import { UserRepository } from '../../infrastructure/repositories/UserRepository
 import { validate } from '../../shared/middleware/validate';
 import { authenticate } from '../../shared/middleware/auth';
 import { uploadSingle } from '../../shared/middleware/upload';
-import { registerSchema, loginSchema, changePasswordSchema } from './auth.dto';
+import { registerSchema, registerAdminSchema, loginSchema, changePasswordSchema } from './auth.dto';
 import { z } from 'zod';
 import { VercelBlobStorageService } from '../../infrastructure/blobStorage/VercelBlobStorageService';
 import { authLimiter } from '../../shared/middleware/rateLimiter';
@@ -19,6 +19,7 @@ const authService = new AuthService(userRepository, blobStorageService);
 const authController = new AuthController(authService);
 
 router.post('/register', authLimiter, uploadSingle('avatar'), validate(registerSchema), authController.register);
+router.post('/register-admin', authLimiter, validate(registerAdminSchema), authController.registerAdmin);
 router.post('/login', authLimiter, validate(loginSchema), authController.login);
 
 const refreshTokenSchema = z.object({

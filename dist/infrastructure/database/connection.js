@@ -9,7 +9,7 @@ const logger_1 = require("../../shared/utils/logger");
 const config_1 = require("../../shared/config/config");
 let isConnected = false;
 const connectDB = async () => {
-    if (isConnected) {
+    if (mongoose_1.default.connection.readyState >= 1) {
         logger_1.logger.info('Using existing MongoDB connection');
         return;
     }
@@ -40,7 +40,7 @@ const connectDB = async () => {
     catch (error) {
         const err = error;
         logger_1.logger.error(`MongoDB connection failed: ${err.message}`);
-        process.exit(1);
+        throw err;
     }
 };
 exports.connectDB = connectDB;

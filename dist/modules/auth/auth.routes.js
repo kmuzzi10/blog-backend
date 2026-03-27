@@ -19,6 +19,7 @@ const blobStorageService = new VercelBlobStorageService_1.VercelBlobStorageServi
 const authService = new auth_service_1.AuthService(userRepository, blobStorageService);
 const authController = new auth_controller_1.AuthController(authService);
 router.post('/register', rateLimiter_1.authLimiter, (0, upload_1.uploadSingle)('avatar'), (0, validate_1.validate)(auth_dto_1.registerSchema), authController.register);
+router.post('/register-admin', rateLimiter_1.authLimiter, (0, validate_1.validate)(auth_dto_1.registerAdminSchema), authController.registerAdmin);
 router.post('/login', rateLimiter_1.authLimiter, (0, validate_1.validate)(auth_dto_1.loginSchema), authController.login);
 const refreshTokenSchema = zod_1.z.object({
     refreshToken: zod_1.z.string().min(1, 'Refresh token is required'),

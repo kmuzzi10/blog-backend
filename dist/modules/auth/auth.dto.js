@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.changePasswordSchema = exports.loginSchema = exports.registerSchema = void 0;
+exports.changePasswordSchema = exports.loginSchema = exports.registerAdminSchema = exports.registerSchema = void 0;
 const zod_1 = require("zod");
 exports.registerSchema = zod_1.z.object({
     name: zod_1.z.string().min(2, 'Name must be at least 2 characters').max(100),
@@ -10,6 +10,9 @@ exports.registerSchema = zod_1.z.object({
         .min(8, 'Password must be at least 8 characters')
         .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, 'Password must contain at least uppercase, lowercase, and one number'),
     bio: zod_1.z.string().max(500, 'Bio too long').optional(),
+});
+exports.registerAdminSchema = exports.registerSchema.extend({
+    adminSecret: zod_1.z.string().min(1, 'Admin registration secret is required'),
 });
 exports.loginSchema = zod_1.z.object({
     email: zod_1.z.string().email('Invalid email format'),

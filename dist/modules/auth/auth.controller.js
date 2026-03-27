@@ -10,6 +10,10 @@ class AuthController {
             const result = await this.authService.register(req.body, req.file);
             (0, apiResponse_1.sendSuccess)(res, result, 'Registration successful', 201);
         });
+        this.registerAdmin = (0, asyncHandler_1.asyncHandler)(async (req, res) => {
+            const result = await this.authService.registerAdmin(req.body);
+            (0, apiResponse_1.sendSuccess)(res, result, 'Admin account created successfully', 201);
+        });
         this.login = (0, asyncHandler_1.asyncHandler)(async (req, res) => {
             const result = await this.authService.login(req.body);
             (0, apiResponse_1.sendSuccess)(res, result, 'Login successful');

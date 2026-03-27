@@ -8,7 +8,7 @@ const pino_1 = __importDefault(require("pino"));
 const config_1 = require("../config/config");
 exports.logger = (0, pino_1.default)({
     level: config_1.config.logLevel,
-    transport: config_1.config.isDevelopment
+    transport: config_1.config.isDevelopment && !process.env.VERCEL
         ? {
             target: 'pino-pretty',
             options: {

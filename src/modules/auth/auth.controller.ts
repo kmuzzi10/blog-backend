@@ -11,6 +11,11 @@ export class AuthController {
     sendSuccess(res, result, 'Registration successful', 201);
   });
 
+  registerAdmin = asyncHandler(async (req: Request, res: Response) => {
+    const result = await this.authService.registerAdmin(req.body);
+    sendSuccess(res, result, 'Admin account created successfully', 201);
+  });
+
   login = asyncHandler(async (req: Request, res: Response) => {
     const result = await this.authService.login(req.body);
     sendSuccess(res, result, 'Login successful');

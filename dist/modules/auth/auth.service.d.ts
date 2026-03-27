@@ -15,6 +15,9 @@ export declare class AuthService {
     private readonly blobStorageService;
     constructor(userRepository: IUserRepository, blobStorageService: IBlobStorageService);
     register(dto: RegisterDto, file?: Express.Multer.File): Promise<AuthResponse>;
+    registerAdmin(dto: RegisterDto & {
+        adminSecret: string;
+    }): Promise<AuthResponse>;
     login(dto: LoginDto): Promise<AuthResponse>;
     changePassword(userId: string, dto: ChangePasswordDto): Promise<void>;
     refreshAccessToken(refreshToken: string): Promise<{

@@ -15,6 +15,26 @@ export declare const registerSchema: z.ZodObject<{
     password: string;
     bio?: string | undefined;
 }>;
+export declare const registerAdminSchema: z.ZodObject<{
+    name: z.ZodString;
+    email: z.ZodString;
+    password: z.ZodString;
+    bio: z.ZodOptional<z.ZodString>;
+} & {
+    adminSecret: z.ZodString;
+}, "strip", z.ZodTypeAny, {
+    name: string;
+    email: string;
+    password: string;
+    adminSecret: string;
+    bio?: string | undefined;
+}, {
+    name: string;
+    email: string;
+    password: string;
+    adminSecret: string;
+    bio?: string | undefined;
+}>;
 export declare const loginSchema: z.ZodObject<{
     email: z.ZodString;
     password: z.ZodString;
