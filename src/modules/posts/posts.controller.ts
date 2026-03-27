@@ -13,8 +13,13 @@ export class PostController {
       try {
         req.body.tags = JSON.parse(req.body.tags);
       } catch {
-        req.body.tags = req.body.tags.split(',').map((t: string) => t.trim());
+        req.body.tags = req.body.tags.split(',').map((t: string) => t.trim()).filter(Boolean);
       }
+    }
+    
+    // Cleanup categoryId if empty string (prevents Mongoose CastError)
+    if (req.body.categoryId === '') {
+      delete req.body.categoryId;
     }
     
     const post = await this.postService.createPost(userId, req.body, req.file);
@@ -64,8 +69,13 @@ export class PostController {
       try {
         req.body.tags = JSON.parse(req.body.tags);
       } catch {
-        req.body.tags = req.body.tags.split(',').map((t: string) => t.trim());
+        req.body.tags = req.body.tags.split(',').map((t: string) => t.trim()).filter(Boolean);
       }
+    }
+    
+    // Cleanup categoryId if empty string (prevents Mongoose CastError)
+    if (req.body.categoryId === '') {
+      delete req.body.categoryId;
     }
 
     const post = await this.postService.updatePost(userId, userRole, id, req.body, req.file);
