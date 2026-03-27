@@ -26,8 +26,31 @@ export const buildApp = (): Express => {
   // Trust proxy for rate limiting on Vercel
   app.set('trust proxy', 1);
 
-  // Database Connection Middleware (Ensures DB is ready on every request in serverless)
+  // 1. Pre-Route Middleware (CORS & Security must be first for preflights)
+  app.use(
+    cors({
+      origin: (origin, callback) => {
+        // If no origin (like postman or same-origin) or if it's in our allowed list
+        if (!origin || config.allowedOrigins.includes(origin)) {
+          callback(null, true);
+        } else {
+          logger.warn(`CORS blocked: Origin "${origin}" not in allowed list [${config.allowedOrigins.join(', ')}]`);
+          callback(null, false); // Block but don't crash
+        }
+      },
+      credentials: true,
+      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization'],
+    })
+  );
+  app.use(helmet());
+  app.use(mongoSanitize());
+
+  // 2. Database Connection Middleware (Ensures DB is ready before usage)
   app.use(async (req, res, next) => {
+    // Skip DB connection for healthy check or simple routes if needed
+    if (req.path === '/health') return next();
+
     try {
       await connectDB();
       next();
@@ -41,20 +64,9 @@ export const buildApp = (): Express => {
     }
   });
 
-  // Basic Middleware
+  // 3. Parser Middleware
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-
-  // Security Middleware
-  app.use(helmet());
-  app.use(
-    cors({
-      origin: config.allowedOrigins,
-      credentials: true,
-      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    })
-  );
-  app.use(mongoSanitize()); // Prevent NoSQL Injection attacks
 
   // Rate Limiting
   const limiter = rateLimit({
