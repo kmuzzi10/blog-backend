@@ -4,7 +4,7 @@ import { config } from '../config/config';
 export const logger = pino({
   level: config.logLevel,
   transport:
-    config.isDevelopment
+    config.isDevelopment && !process.env.VERCEL
       ? {
           target: 'pino-pretty',
           options: {
