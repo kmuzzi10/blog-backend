@@ -58,8 +58,10 @@ const startServer = async () => {
         // Still export the app so Vercel can handle the error route
     }
 };
-// Start the server initialization
-startServer();
+// Start the server initialization (Only for local dev)
+if (config_1.config.nodeEnv !== 'production') {
+    startServer();
+}
 // Export the app for Vercel
 exports.default = app;
 //# sourceMappingURL=server.js.map

@@ -18,11 +18,28 @@ import { userRoutes } from './modules/users/users.routes';
 import { categoryRoutes } from './modules/categories/category.routes';
 import { commentRoutes } from './modules/comments/comments.routes';
 
+import { connectDB } from './infrastructure/database/connection';
+
 export const buildApp = (): Express => {
   const app: Express = express();
 
   // Trust proxy for rate limiting on Vercel
   app.set('trust proxy', 1);
+
+  // Database Connection Middleware (Ensures DB is ready on every request in serverless)
+  app.use(async (req, res, next) => {
+    try {
+      await connectDB();
+      next();
+    } catch (error) {
+      logger.error({ err: error }, 'Database connection middleware failed');
+      res.status(503).json({
+        success: false,
+        message: 'Database connection currently unavailable. Please try again.',
+        code: 'SERVICE_UNAVAILABLE',
+      });
+    }
+  });
 
   // Basic Middleware
   app.use(express.json({ limit: '10mb' }));

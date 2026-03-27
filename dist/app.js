@@ -21,10 +21,26 @@ const posts_routes_1 = require("./modules/posts/posts.routes");
 const users_routes_1 = require("./modules/users/users.routes");
 const category_routes_1 = require("./modules/categories/category.routes");
 const comments_routes_1 = require("./modules/comments/comments.routes");
+const connection_1 = require("./infrastructure/database/connection");
 const buildApp = () => {
     const app = (0, express_1.default)();
     // Trust proxy for rate limiting on Vercel
     app.set('trust proxy', 1);
+    // Database Connection Middleware (Ensures DB is ready on every request in serverless)
+    app.use(async (req, res, next) => {
+        try {
+            await (0, connection_1.connectDB)();
+            next();
+        }
+        catch (error) {
+            logger_1.logger.error({ err: error }, 'Database connection middleware failed');
+            res.status(503).json({
+                success: false,
+                message: 'Database connection currently unavailable. Please try again.',
+                code: 'SERVICE_UNAVAILABLE',
+            });
+        }
+    });
     // Basic Middleware
     app.use(express_1.default.json({ limit: '10mb' }));
     app.use(express_1.default.urlencoded({ extended: true, limit: '10mb' }));

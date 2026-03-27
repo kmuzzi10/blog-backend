@@ -65,8 +65,10 @@ const startServer = async () => {
   }
 };
 
-// Start the server initialization
-startServer();
+// Start the server initialization (Only for local dev)
+if (config.nodeEnv !== 'production') {
+  startServer();
+}
 
 // Export the app for Vercel
 export default app;
