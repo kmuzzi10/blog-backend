@@ -21,6 +21,9 @@ import { commentRoutes } from './modules/comments/comments.routes';
 export const buildApp = (): Express => {
   const app: Express = express();
 
+  // Trust proxy for rate limiting on Vercel
+  app.set('trust proxy', 1);
+
   // Basic Middleware
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));

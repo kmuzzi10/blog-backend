@@ -23,6 +23,8 @@ const category_routes_1 = require("./modules/categories/category.routes");
 const comments_routes_1 = require("./modules/comments/comments.routes");
 const buildApp = () => {
     const app = (0, express_1.default)();
+    // Trust proxy for rate limiting on Vercel
+    app.set('trust proxy', 1);
     // Basic Middleware
     app.use(express_1.default.json({ limit: '10mb' }));
     app.use(express_1.default.urlencoded({ extended: true, limit: '10mb' }));
