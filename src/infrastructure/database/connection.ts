@@ -18,6 +18,7 @@ export const connectDB = async (): Promise<void> => {
       socketTimeoutMS: 45000,
       maxPoolSize: 10,
       minPoolSize: 2,
+      family: 4, // Force IPv4 to avoid DNS resolution issues on some machines
     });
 
     isConnected = true;

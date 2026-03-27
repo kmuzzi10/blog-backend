@@ -20,6 +20,7 @@ const connectDB = async () => {
             socketTimeoutMS: 45000,
             maxPoolSize: 10,
             minPoolSize: 2,
+            family: 4, // Force IPv4 to avoid DNS resolution issues on some machines
         });
         isConnected = true;
         logger_1.logger.info(`MongoDB connected: ${conn.connection.host}`);
